@@ -1,23 +1,27 @@
 let random_pokemon = []
 let image_array = []
-$.get('http://pokeapi.co/api/v2/pokemon', function(data) {
+$.get('http://pokeapi.co/api/v2/pokemon').then( function(data) {
   let count = data.count
   console.log("Retrieved count")
 
-  $.get('http://pokeapi.co/api/v2/pokemon/?limit=' + count, function(data) {
+  return $.get('http://pokeapi.co/api/v2/pokemon/?limit=' + count)
+}).then( function(data) {
     console.log("Retrieved all pokemon")
     let all_pokemon = data.results
     random_pokemon = pick_three_randomly(all_pokemon)
 
-    $.get(random_pokemon[0].url, function(pokemon_data) {
+  return $.get(random_pokemon[0].url)
+}).then( function(pokemon_data) {
       console.log("Retrieved first pokemon")
       add_image_to_array(image_array, pokemon_data)
 
-      $.get(random_pokemon[1].url, function(pokemon_data) {
+  return $.get(random_pokemon[1].url)
+}).then( function(pokemon_data) {
         console.log("Retrieved second pokemon")
         add_image_to_array(image_array, pokemon_data)
 
-        $.get(random_pokemon[2].url, function(pokemon_data) {
+  return $.get(random_pokemon[2].url)
+}).then( function(pokemon_data) {
           console.log("Retrieved third pokemon")
           add_image_to_array(image_array, pokemon_data)
 
@@ -28,12 +32,9 @@ $.get('http://pokeapi.co/api/v2/pokemon', function(data) {
               $("<h1>", {text: img.name}),
               $("<img>", {src: img.front}),
               $("<img>", {src: img.back})
-            )
-          }
-        })
-      })
-    })
-  })
+
+          )
+        }
 })
 
 function add_image_to_array(image_array, pokemon_data) {
