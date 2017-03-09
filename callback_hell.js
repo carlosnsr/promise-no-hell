@@ -1,41 +1,33 @@
 let random_pokemon = []
 let image_array = []
 $.get('http://pokeapi.co/api/v2/pokemon', function(data) {
-  let count = data.count
-  console.log("Retrieved count")
+  var count = data.count
+  return $.get("http://pokeapi.co/api/v2/pokemon" + count)
+}).then(function(data) {
+  var everyPokemon = data.results
+  random_pokemon = pick_three_randomly(everyPokemon)
+  return $.get(random_pokemon[0].url)
 
-  $.get('http://pokeapi.co/api/v2/pokemon/?limit=' + count, function(data) {
-    console.log("Retrieved all pokemon")
-    let all_pokemon = data.results
-    random_pokemon = pick_three_randomly(all_pokemon)
+}).then(function(pokemon_data){
+  add_image_to_array(image_array, pokemon_data)
+  return $.get(random_pokemon[1].url)
 
-    $.get(random_pokemon[0].url, function(pokemon_data) {
-      console.log("Retrieved first pokemon")
-      add_image_to_array(image_array, pokemon_data)
+}).then(function(pokemon_data){
+  add_image_to_array(image_array, pokemon_data)
+  return $.get(random_pokemon[2].url)
 
-      $.get(random_pokemon[1].url, function(pokemon_data) {
-        console.log("Retrieved second pokemon")
-        add_image_to_array(image_array, pokemon_data)
-
-        $.get(random_pokemon[2].url, function(pokemon_data) {
-          console.log("Retrieved third pokemon")
-          add_image_to_array(image_array, pokemon_data)
-
-          $("body").empty()
-          for (let i = 0; i < image_array.length; ++i) {
-            let img = image_array[i]
-            $("body").append(
-              $("<h1>", {text: img.name}),
-              $("<img>", {src: img.front}),
-              $("<img>", {src: img.back})
-            )
-          }
-        })
-      })
-    })
-  })
+}).then(function(pokemon_data){
+  add_image_to_array(image_array, pokemon_data)
+  $("body").empty()
+  for (let i = 0; i < image_array.length; ++i) {
+    let img = image_array[i]
+    $("body").append(
+      $("<h1>", {text: img.name}),
+      $("<img>", {src: img.front}),
+      $("<img>", {src: img.back})
+    )
+  }
 })
-
 function add_image_to_array(image_array, pokemon_data) {
   image_array.push({
     name: pokemon_data.name,
