@@ -1,10 +1,10 @@
 let random_pokemon = []
 let image_array = []
-$.get('http://pokeapi.co/api/v2/pokemon', function(data) {
+$.get('https://pokeapi.co/api/v2/pokemon', function(data) {
   let count = data.count
   console.log("Retrieved count")
 
-  $.get('http://pokeapi.co/api/v2/pokemon/?limit=' + count, function(data) {
+  $.get('https://pokeapi.co/api/v2/pokemon/?limit=' + count, function(data) {
     console.log("Retrieved all pokemon")
     let all_pokemon = data.results
     random_pokemon = pick_three_randomly(all_pokemon)
