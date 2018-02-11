@@ -10,21 +10,14 @@ $.get('https://pokeapi.co/api/v2/pokemon').then(function(data) {
   let all_pokemon = data.results
   random_pokemon = pick_three_randomly(all_pokemon)
 
-  return $.get(random_pokemon[0].url)
+  console.log("Retrieving selected pokemon")
+  pokemon_promises  = random_pokemon.map((pokemon) => $.get(pokemon.url))
+  return Promise.all(pokemon_promises)
 }).then(function(pokemon_data) {
-  console.log("Retrieved first pokemon")
-  add_image_to_array(image_array, pokemon_data)
+  console.log("Retrieved selected pokemon")
+  pokemon_data.forEach((pokemon) => add_image_to_array(image_array, pokemon))
 
-  return $.get(random_pokemon[1].url)
-}).then(function(pokemon_data) {
-  console.log("Retrieved second pokemon")
-  add_image_to_array(image_array, pokemon_data)
-
-  return $.get(random_pokemon[2].url)
-}).then(function(pokemon_data) {
-  console.log("Retrieved third pokemon")
-  add_image_to_array(image_array, pokemon_data)
-
+  console.log("Displaying selected pokemon")
   $("body").empty()
   for (let i = 0; i < image_array.length; ++i) {
     let img = image_array[i]
@@ -49,7 +42,7 @@ function pick_three_randomly(data_array) {
   let count = data_array.length
   for (let i = 0; i < 3; ++i) {
     let random_index = Math.floor(Math.random() * count)
-    chosen.push( data_array[random_index] )
+    chosen.push(data_array[random_index])
   }
   return chosen
 }
